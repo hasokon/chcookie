@@ -18,7 +18,7 @@ const ARG_COOKIE_NAME: &str = "name";
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 fn exec(matches: &ArgMatches) -> Result<Vec<DecryptedCookie>> {
-    let name = matches.value_of(ARG_COOKIE_NAME);
+    let name = matches.values_of(ARG_COOKIE_NAME).map(|vs| vs.collect::<Vec<&str>>());
     let host = matches.value_of(ARG_HOST);
 
     let limit: u32 = value_t!(matches, ARG_LIMIT, u32).map_err(|err| {
@@ -53,6 +53,7 @@ fn main() {
             .help("specify cookie name for search cookie value.")
             .short("n")
             .long("name")
+            .multiple(true)
             .takes_value(true))
         .get_matches();
 

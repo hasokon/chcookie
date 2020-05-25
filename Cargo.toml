@@ -1,6 +1,6 @@
 [package]
 name = "chcookie"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Kentaro Iwata"]
 edition = "2018"
 description = "Get Chrome Cookie command"
