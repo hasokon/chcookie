@@ -4,7 +4,7 @@ use crate::models::{CookieDataRaw, Result, GetChromeCookieError};
 
 const COOKIES_FILE: &str = "Library/Application Support/Google/Chrome/Default/Cookies";
 
-pub fn get_cookie(name: &Option<Vec<&str>>, host: &Option<&str>, limit: u32) -> Result<Vec<CookieDataRaw>> {
+pub fn get_cookie(name: &Option<Vec<&str>>, host: &Option<Vec<&str>>, limit: u32) -> Result<Vec<CookieDataRaw>> {
     // TODO: osごとにパス変える
     // Cookiesファイルの場所をHomeディレクトリから算出
     let mut cookies_file_path_buf = home_dir().unwrap();
@@ -27,7 +27,10 @@ pub fn get_cookie(name: &Option<Vec<&str>>, host: &Option<&str>, limit: u32) -> 
     };
     let where_host_key_statement = match host {
         None => "".to_string(),
-        Some(h) => format!("and host_key like '%{}%'", h).to_string(),
+        Some(h) => {
+            let hosts = h.iter().map(|s| format!("'{}'", s)).collect::<Vec<String>>().join(",");
+            format!("and host_key in ({})", hosts).to_string()
+        },
     };
     let limit_statement = format!("limit {}", limit);
     let sql = format!("{} {} {} {};", default_sql, where_name_statement, where_host_key_statement, limit_statement);

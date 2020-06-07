@@ -19,7 +19,7 @@ const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 fn exec(matches: &ArgMatches) -> Result<Vec<DecryptedCookie>> {
     let name = matches.values_of(ARG_COOKIE_NAME).map(|vs| vs.collect::<Vec<&str>>());
-    let host = matches.value_of(ARG_HOST);
+    let host = matches.values_of(ARG_HOST).map(|vs| vs.collect::<Vec<&str>>());
 
     let limit: u32 = value_t!(matches, ARG_LIMIT, u32).map_err(|err| {
         GetChromeCookieError::new(format!("Error: limit must be integer value: {}", err))
@@ -41,6 +41,7 @@ fn main() {
         .arg(Arg::with_name(ARG_HOST)
             .help("specify host name for search cookie value.")
             .short("h")
+            .multiple(true)
             .long("host")
             .takes_value(true))
         .arg(Arg::with_name(ARG_LIMIT)
